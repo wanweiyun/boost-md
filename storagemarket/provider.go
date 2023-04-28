@@ -160,7 +160,7 @@ func NewProvider(cfg Config, sqldb *sql.DB, dealsDB *db.DealsDB, fundMgr *fundma
 
 	// Make sure that max concurrent local commp is at least 1
 	if cfg.MaxConcurrentLocalCommp == 0 {
-		cfg.MaxConcurrentLocalCommp = 1
+		cfg.MaxConcurrentLocalCommp = 8
 	}
 
 	if cfg.SealingPipelineCacheTimeout < 0 {

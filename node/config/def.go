@@ -119,7 +119,7 @@ func DefaultBoost() *Boost {
 			MaxTransferDuration: Duration(24 * 3600 * time.Second),
 
 			RemoteCommp:             false,
-			MaxConcurrentLocalCommp: 1,
+			MaxConcurrentLocalCommp: 8,
 
 			HttpTransferMaxConcurrentDownloads: 20,
 			HttpTransferStallTimeout:           Duration(5 * time.Minute),
