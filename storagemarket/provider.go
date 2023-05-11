@@ -165,7 +165,7 @@ func NewProvider(cfg Config, sqldb *sql.DB, dealsDB *db.DealsDB, fundMgr *fundma
 	}
 
 	if usedc := os.Getenv("USEDCPRO"); usedc != "" {
-		num, err := strconv.Atoi(str)
+		num, err := strconv.Atoi(usedc)
 		if err != nil {
 			cfg.MaxConcurrentLocalCommp = 8
 		}
