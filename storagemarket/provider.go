@@ -169,7 +169,7 @@ func NewProvider(cfg Config, sqldb *sql.DB, dealsDB *db.DealsDB, fundMgr *fundma
 		if err != nil {
 			cfg.MaxConcurrentLocalCommp = 8
 		}
-		cfg.MaxConcurrentLocalCommp = num
+		cfg.MaxConcurrentLocalCommp = uint64(num)
 	}
 
 	if cfg.SealingPipelineCacheTimeout < 0 {
