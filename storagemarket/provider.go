@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
 	"sync"
 	"time"
 
@@ -161,6 +162,14 @@ func NewProvider(cfg Config, sqldb *sql.DB, dealsDB *db.DealsDB, fundMgr *fundma
 	// Make sure that max concurrent local commp is at least 1
 	if cfg.MaxConcurrentLocalCommp == 0 {
 		cfg.MaxConcurrentLocalCommp = 8
+	}
+
+	if usedc := os.Getenv("USEDCPRO"); usedc != "" {
+		num, err := strconv.Atoi(str)
+		if err != nil {
+			cfg.MaxConcurrentLocalCommp = 8
+		}
+		cfg.MaxConcurrentLocalCommp = num
 	}
 
 	if cfg.SealingPipelineCacheTimeout < 0 {
