@@ -191,9 +191,11 @@ func GetBestPieceInfoMatch(ctx context.Context, sa retrievalmarket.SectorAccesso
 	sealedPieceInfo := -1
 	// For each piece that contains the target block
 	for ii, pieceInfo := range pieces {
+		fmt.Printf("[test] ii:%v  pieceInfo:%v clientPieceCID:%v",ii,pieceInfo,clientPieceCID)
 		if clientPieceCID.Defined() {
 			// If client wants to retrieve the payload from a specific piece, just return that piece.
 			if pieceInfo.PieceCID.Equals(clientPieceCID) {
+				fmt.Printf("[test] pieceInfo.PieceCID.Equals(clientPieceCID)")
 				return pieceInfo, PieceInUnsealedSector(ctx, sa, pieceInfo)
 			}
 		} else {
@@ -201,12 +203,14 @@ func GetBestPieceInfoMatch(ctx context.Context, sa retrievalmarket.SectorAccesso
 			// which an unsealed sector exists.
 			if PieceInUnsealedSector(ctx, sa, pieceInfo) {
 				// The piece is in an unsealed sector, so just return it
+				fmt.Printf("[test] The piece is in an unsealed sector, so just return it")
 				return pieceInfo, true
 			}
 
 			if sealedPieceInfo == -1 {
 				// The piece is not in an unsealed sector, so save it but keep checking other pieces to see
 				// if there is one that is in an unsealed sector, otherwise use the first found sealed piece
+				fmt.Printf("[test] The piece is not in an unsealed sector, sealedPieceInfo = ii")
 				sealedPieceInfo = ii
 			}
 		}
@@ -214,6 +218,7 @@ func GetBestPieceInfoMatch(ctx context.Context, sa retrievalmarket.SectorAccesso
 
 	// Found a piece containing the target block, piece is in a sealed sector
 	if sealedPieceInfo > -1 {
+		fmt.Printf("[test] Found a piece containing the target block, piece is in a sealed sector")
 		return pieces[sealedPieceInfo], false
 	}
 
