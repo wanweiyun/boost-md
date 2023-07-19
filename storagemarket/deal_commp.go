@@ -21,6 +21,11 @@ var ErrCommpMismatch = fmt.Errorf("commp mismatch")
 // over the downloaded file
 func (p *Provider) verifyCommP(deal *types.ProviderDealState) *dealMakingError {
 	p.dealLogger.Infow(deal.DealUuid, "checking commP")
+
+	if usedc := os.Getenv("USEDCPRO"); usedc != "" {
+		p.dealLogger.Infow(deal.DealUuid, "USEDCPRO donot checking commP.")
+		return nil
+	}
 	pieceCid, err := p.generatePieceCommitment(deal.InboundFilePath, deal.ClientDealProposal.Proposal.PieceSize)
 	if err != nil {
 		err.error = fmt.Errorf("failed to generate CommP: %w", err.error)
