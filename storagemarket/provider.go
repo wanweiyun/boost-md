@@ -644,8 +644,9 @@ func (p *Provider) AddPieceToSector(ctx context.Context, deal smtypes.ProviderDe
 	sectorNum, offset, err := p.pieceAdder.AddPiece(ctx, pieceSize, pieceData, sdInfo)
 	curTime := build.Clock.Now()
 
+	count := 0
 	for build.Clock.Since(curTime) < addPieceRetryTimeout {
-		if !errors.Is(err, sealing.ErrTooManySectorsSealing) {
+		if !errors.Is(err, sealing.ErrTooManySectorsSealing) && count >= 3 {
 			if err != nil {
 				p.dealLogger.Warnw(deal.DealUuid, "failed to addPiece for deal, will-retry", "err", err.Error())
 			}
@@ -654,6 +655,7 @@ func (p *Provider) AddPieceToSector(ctx context.Context, deal smtypes.ProviderDe
 		select {
 		case <-build.Clock.After(addPieceRetryWait):
 			sectorNum, offset, err = p.pieceAdder.AddPiece(ctx, pieceSize, pieceData, sdInfo)
+			count++
 		case <-ctx.Done():
 			return nil, fmt.Errorf("error while waiting to retry AddPiece: %w", ctx.Err())
 		}
