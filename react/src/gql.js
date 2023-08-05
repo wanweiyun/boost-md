@@ -620,6 +620,7 @@ const StorageAskUpdate = gql`
 const MpoolQuery = gql`
     query AppMpoolQuery($local: Boolean!) {
         mpool(local: $local) {
+            SentEpoch
             From
             To
             Nonce
@@ -631,6 +632,12 @@ const MpoolQuery = gql`
             Params
             BaseFee
         }
+    }
+`;
+
+const MpoolAlertsQuery = gql`
+    query AppMpoolAlertsQuery {
+        mpoolAlertsCount
     }
 `;
 
@@ -689,6 +696,7 @@ export {
     TransfersQuery,
     TransferStatsQuery,
     MpoolQuery,
+    MpoolAlertsQuery,
     SealingPipelineQuery,
     Libp2pAddrInfoQuery,
     StorageAskQuery,

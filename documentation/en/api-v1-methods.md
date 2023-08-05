@@ -1,4 +1,6 @@
 # Groups
+* [](#)
+  * [Discover](#discover)
 * [Actor](#actor)
   * [ActorSectorSize](#actorsectorsize)
 * [Auth](#auth)
@@ -21,6 +23,8 @@
   * [BoostDealBySignedProposalCid](#boostdealbysignedproposalcid)
   * [BoostDummyDeal](#boostdummydeal)
   * [BoostIndexerAnnounceAllDeals](#boostindexerannouncealldeals)
+  * [BoostIndexerAnnounceLatest](#boostindexerannouncelatest)
+  * [BoostIndexerAnnounceLatestHttp](#boostindexerannouncelatesthttp)
   * [BoostMakeDeal](#boostmakedeal)
   * [BoostOfflineDealWithData](#boostofflinedealwithdata)
 * [Deals](#deals)
@@ -92,6 +96,28 @@
   * [RuntimeSubsystems](#runtimesubsystems)
 * [Sectors](#sectors)
   * [SectorsRefs](#sectorsrefs)
+## 
+
+
+### Discover
+
+
+Perms: read
+
+Inputs: `null`
+
+Response:
+```json
+{
+  "info": {
+    "title": "Boost RPC API",
+    "version": "1.2.1/generated=2020-11-22T08:22:42-06:00"
+  },
+  "methods": [],
+  "openrpc": "1.2.6"
+}
+```
+
 ## Actor
 
 
@@ -538,6 +564,41 @@ Perms: admin
 Inputs: `null`
 
 Response: `{}`
+
+### BoostIndexerAnnounceLatest
+
+
+Perms: admin
+
+Inputs: `null`
+
+Response:
+```json
+{
+  "/": "bafy2bzacea3wsdh6y3a36tb3skempjoxqpuyompjbmfeyf34fi3uy6uue42v4"
+}
+```
+
+### BoostIndexerAnnounceLatestHttp
+
+
+Perms: admin
+
+Inputs:
+```json
+[
+  [
+    "string value"
+  ]
+]
+```
+
+Response:
+```json
+{
+  "/": "bafy2bzacea3wsdh6y3a36tb3skempjoxqpuyompjbmfeyf34fi3uy6uue42v4"
+}
+```
 
 ### BoostMakeDeal
 
@@ -1253,7 +1314,9 @@ Response:
 ```json
 {
   "Reachability": 1,
-  "PublicAddr": "string value"
+  "PublicAddrs": [
+    "string value"
+  ]
 }
 ```
 

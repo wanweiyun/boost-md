@@ -4,6 +4,7 @@ import (
 	"bytes"
 
 	"github.com/filecoin-project/boost-gfm/retrievalmarket"
+	graphsync "github.com/filecoin-project/boost-graphsync"
 	datatransfer "github.com/filecoin-project/go-data-transfer"
 	"github.com/ipfs/go-cid"
 	"github.com/ipld/go-ipld-prime"
@@ -13,9 +14,16 @@ import (
 	cbg "github.com/whyrusleeping/cbor-gen"
 )
 
+type RetrievalType string
+
+const RetrievalTypeDeal RetrievalType = "Deal"
+const RetrievalTypeLegs RetrievalType = "Legs"
+
 type retrievalState struct {
-	cs   *channelState
-	mkts *retrievalmarket.ProviderDealState
+	retType RetrievalType
+	cs      *channelState
+	mkts    *retrievalmarket.ProviderDealState
+	gsReq   graphsync.RequestID
 }
 
 func (r retrievalState) ChannelState() channelState                           { return *r.cs }
