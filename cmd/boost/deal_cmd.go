@@ -328,6 +328,20 @@ func dealCmdAction(cctx *cli.Context, isOnline bool) error {
 	msg += fmt.Sprintf("  provider collateral: %s\n", chain_types.FIL(dealProposal.Proposal.ProviderCollateral).Short())
 	fmt.Println(msg)
 
+	if filepath := os.Getenv("DEALRECORD"); filepath != "" { //export DEALRECORD="./record.txt"
+		record = fmt.Sprintf("uuid:%s provider:%s payloadcid:%s commp:%s startepoch:%d endepoch:%d \n", dealUuid, maddr, rootCid, dealProposal.Proposal.PieceCID, dealProposal.Proposal.StartEpoch, dealProposal.Proposal.EndEpoch)
+
+		file, err := os.OpenFile("test.txt", os.O_APPEND|os.O_WRONLY, 0644)
+    	if err != nil {
+			fmt.Errorf("[develop] DEALRECORD open file.  err:%w",err)
+    	}
+    	defer file.Close()
+	
+    	if _, err := file.WriteString(record); err != nil {
+			fmt.Errorf("[develop] DEALRECORD write file.  err:%w",err)
+    	}
+	}
+
 	return nil
 }
 
