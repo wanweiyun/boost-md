@@ -4,6 +4,8 @@ import {React, useState} from "react";
 import {humanFIL} from "./util";
 import './Mpool.css'
 import {PageContainer} from "./Components";
+import {EpochQuery} from "./gql";
+import moment from "moment";
 
 export function MpoolPage(props) {
     return <PageContainer pageType="mpool" title="Message Pool">
@@ -13,7 +15,7 @@ export function MpoolPage(props) {
 
 function MpoolContent(props) {
     const [local, setLocal] = useState(true)
-    const {loading, error, data} = useQuery(MpoolQuery, { variables: { local } })
+    const {loading, error, data} = useQuery(MpoolQuery, { variables: { local } , pollInterval: 10000, fetchPolicy: "network-only"})
 
     if (loading) {
         return <div>Loading...</div>
@@ -44,7 +46,20 @@ function MpoolMessage(props) {
     const i = props.i
     const msg = props.msg
 
+    const {data} = useQuery(EpochQuery)
+
+    const handleParamsClick = (el) => {
+        el.target.classList.toggle('expanded')
+    }
+
+    let elapsed = (data.epoch.Epoch+'') - (msg.SentEpoch+'')
+    let x = moment().add(-(elapsed)*(data.epoch.SecondsPerEpoch+''), 'seconds').fromNow()
+
     return <>
+        <tr key={"sentepoch"}>
+            <td>Sent At Epoch</td>
+            <td>{msg.SentEpoch+''} ({elapsed} epochs / {x} ago)</td>
+        </tr>
         <tr key={"to"}>
             <td>To</td>
             <td className="address">{msg.To}</td>
@@ -67,7 +82,9 @@ function MpoolMessage(props) {
         </tr>
         <tr key={i+"params"}>
             <td>Params</td>
-            <td>{msg.Params}</td>
+            <td>
+                <div onClick={handleParamsClick} className="params">{msg.Params}</div>
+            </td>
         </tr>
         <tr key={i+"gas-fee-cap"}>
             <td>Gas Fee Cap</td>
@@ -75,7 +92,7 @@ function MpoolMessage(props) {
         </tr>
         <tr key={i+"gas-limit"}>
             <td>Gas Limit</td>
-            <td>{msg.GasLimit}</td>
+            <td>{humanFIL(msg.GasLimit)}</td>
         </tr>
         <tr key={i+"gas-premium"}>
             <td>Gas Premium</td>

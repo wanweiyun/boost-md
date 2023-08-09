@@ -20,11 +20,12 @@ import (
 	"github.com/filecoin-project/dagstore/mount"
 	"github.com/filecoin-project/go-state-types/abi"
 	"github.com/hashicorp/go-multierror"
-	"github.com/ipfs/go-blockservice"
+	"github.com/ipfs/boxo/blockservice"
+	blockstore "github.com/ipfs/boxo/blockstore"
+	offline "github.com/ipfs/boxo/exchange/offline"
+	"github.com/ipfs/boxo/gateway"
 	"github.com/ipfs/go-cid"
 	"github.com/ipfs/go-datastore"
-	blockstore "github.com/ipfs/go-ipfs-blockstore"
-	offline "github.com/ipfs/go-ipfs-exchange-offline"
 	"go.opencensus.io/stats"
 )
 
@@ -42,11 +43,12 @@ type apiVersion struct {
 }
 
 type HttpServer struct {
-	path    string
-	port    int
-	api     HttpServerApi
-	opts    HttpServerOptions
-	idxPage string
+	path       string
+	listenAddr string
+	port       int
+	api        HttpServerApi
+	opts       HttpServerOptions
+	idxPage    string
 
 	ctx    context.Context
 	cancel context.CancelFunc
@@ -65,11 +67,11 @@ type HttpServerOptions struct {
 	SupportedResponseFormats []string
 }
 
-func NewHttpServer(path string, port int, api HttpServerApi, opts *HttpServerOptions) *HttpServer {
+func NewHttpServer(path string, listenAddr string, port int, api HttpServerApi, opts *HttpServerOptions) *HttpServer {
 	if opts == nil {
 		opts = &HttpServerOptions{ServePieces: true}
 	}
-	return &HttpServer{path: path, port: port, api: api, opts: *opts, idxPage: parseTemplate(*opts)}
+	return &HttpServer{path: path, listenAddr: listenAddr, port: port, api: api, opts: *opts, idxPage: parseTemplate(*opts)}
 }
 
 func (s *HttpServer) pieceBasePath() string {
@@ -90,7 +92,7 @@ func (s *HttpServer) Start(ctx context.Context) error {
 
 	if s.opts.Blockstore != nil {
 		blockService := blockservice.New(s.opts.Blockstore, offline.Exchange(s.opts.Blockstore))
-		gw, err := NewBlocksGateway(blockService, nil)
+		gw, err := gateway.NewBlocksBackend(blockService)
 		if err != nil {
 			return fmt.Errorf("creating blocks gateway: %w", err)
 		}
@@ -102,7 +104,7 @@ func (s *HttpServer) Start(ctx context.Context) error {
 	handler.HandleFunc("/info", s.handleInfo)
 	handler.Handle("/metrics", metrics.Exporter("booster_http")) // metrics
 	s.server = &http.Server{
-		Addr:    fmt.Sprintf(":%d", s.port),
+		Addr:    fmt.Sprintf("%s:%d", s.listenAddr, s.port),
 		Handler: handler,
 		// This context will be the parent of the context associated with all
 		// incoming requests

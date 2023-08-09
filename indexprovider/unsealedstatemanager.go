@@ -14,8 +14,8 @@ import (
 	"github.com/filecoin-project/go-state-types/abi"
 	"github.com/filecoin-project/lotus/storage/sealer/storiface"
 	logging "github.com/ipfs/go-log/v2"
+	"github.com/ipni/go-libipni/metadata"
 	provider "github.com/ipni/index-provider"
-	"github.com/ipni/index-provider/metadata"
 )
 
 //go:generate go run github.com/golang/mock/mockgen -destination=./mock/mock.go -package=mock github.com/filecoin-project/boost-gfm/storagemarket StorageProvider
@@ -141,17 +141,12 @@ func (m *UnsealedStateManager) checkForUpdates(ctx context.Context) error {
 					VerifiedDeal:  deal.DealProposal.Proposal.VerifiedDeal,
 				}
 				announceCid, err := m.idxprov.announceBoostDealMetadata(ctx, md, propCid)
-				if err != nil {
-					// Check if the error is because the deal was already advertised
-					if !errors.Is(err, provider.ErrAlreadyAdvertised) {
-						// There was some other error, write it to the log
-						usmlog.Errorf("announcing deal %s to index provider: %w", deal.DealID, err)
-						continue
-					}
-				} else {
+				if err == nil {
 					usmlog.Infow("announced deal seal state to index provider",
 						"deal id", deal.DealID, "sector id", deal.SectorID.Number,
 						"seal state", sectorSealState, "announce cid", announceCid.String())
+				} else {
+					usmlog.Errorf("announcing deal %s to index provider: %w", deal.DealID, err)
 				}
 			}
 		}
