@@ -332,7 +332,7 @@ func dealCmdAction(cctx *cli.Context, isOnline bool) error {
 	if filepath := os.Getenv("DEALRECORD"); filepath != "" { //export DEALRECORD="./record.txt"
 		record := fmt.Sprintf("uuid:%s provider:%s payloadcid:%s commp:%s startepoch:%d endepoch:%d \n", dealUuid, maddr, rootCid, dealProposal.Proposal.PieceCID, dealProposal.Proposal.StartEpoch, dealProposal.Proposal.EndEpoch)
 
-		file, err := os.OpenFile("test.txt", os.O_APPEND|os.O_WRONLY, 0644)
+		file, err := os.OpenFile(filepath, os.O_APPEND|os.O_WRONLY, 0644)
     	if err != nil {
 			fmt.Errorf("[develop] DEALRECORD open file.  err:%w",err)
     	}
