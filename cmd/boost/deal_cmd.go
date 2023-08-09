@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"os"
 
 	bcli "github.com/filecoin-project/boost/cli"
 	clinode "github.com/filecoin-project/boost/cli/node"
@@ -329,7 +330,7 @@ func dealCmdAction(cctx *cli.Context, isOnline bool) error {
 	fmt.Println(msg)
 
 	if filepath := os.Getenv("DEALRECORD"); filepath != "" { //export DEALRECORD="./record.txt"
-		record = fmt.Sprintf("uuid:%s provider:%s payloadcid:%s commp:%s startepoch:%d endepoch:%d \n", dealUuid, maddr, rootCid, dealProposal.Proposal.PieceCID, dealProposal.Proposal.StartEpoch, dealProposal.Proposal.EndEpoch)
+		record := fmt.Sprintf("uuid:%s provider:%s payloadcid:%s commp:%s startepoch:%d endepoch:%d \n", dealUuid, maddr, rootCid, dealProposal.Proposal.PieceCID, dealProposal.Proposal.StartEpoch, dealProposal.Proposal.EndEpoch)
 
 		file, err := os.OpenFile("test.txt", os.O_APPEND|os.O_WRONLY, 0644)
     	if err != nil {
