@@ -22,8 +22,8 @@ var ErrCommpMismatch = fmt.Errorf("commp mismatch")
 func (p *Provider) verifyCommP(deal *types.ProviderDealState) *dealMakingError {
 	p.dealLogger.Infow(deal.DealUuid, "checking commP")
 
-	if usedc := os.Getenv("USEDCPRO"); usedc != "" {
-		p.dealLogger.Infow(deal.DealUuid, "USEDCPRO donot checking commP.")
+	if usedc := os.Getenv("JUMPCHECK"); usedc != "" {
+		p.dealLogger.Infow(deal.DealUuid, "JUMPCHECK donot checking commP.")
 		return nil
 	}
 	pieceCid, err := p.generatePieceCommitment(deal.InboundFilePath, deal.ClientDealProposal.Proposal.PieceSize)
